@@ -9,6 +9,7 @@ use url::{Url};
 #[derive(Parser, Debug)]
 #[command(author = "John Crickett", version, about="rscurl, a simple curl clone in Rust")]
 struct Arguments {
+    /// Select the HTTP Method
     #[arg(
         short = 'X',
         long = "request",
@@ -17,6 +18,9 @@ struct Arguments {
     )]
     method: String,
     url: String,
+    /// Enable verbose mode
+    #[arg(short = 'v', long = "verbose")]
+    verbose: bool,
 }
 
 fn main() {
@@ -31,14 +35,28 @@ fn main() {
         }
     };
 
-    println!("Sending Request {} {} HTTP/1.1", args.method, parsed_url.path());
-    println!("Host: {}", parsed_url.host_str().unwrap());
-    println!("Accept: */*");
+    if args.verbose {
+        println!("> {} {} HTTP/1.1", args.method, parsed_url.path());
+        println!("> Host: {}", parsed_url.host_str().unwrap());
+        println!("> Accept: */*\n>");
+    }
 
     match send_request(parsed_url.host_str().unwrap(), 80, parsed_url.path()) {
         Ok(response) => {
-            println!("Received response:");
-            println!("{}", response);
+            let parts: Vec<&str> = response.split("\r\n\r\n").collect();
+
+            if args.verbose {
+                for line in parts[0].lines() {
+                    println!("< {}", line);
+                }
+                println!("<");
+            }
+            
+            if parts.len() > 1 {
+                for line in parts[1].lines() {
+                    println!("{}", line);
+                }
+            }
         },
         Err(e) => eprintln!("Error: {}", e),
     }
