@@ -41,7 +41,7 @@ fn main() {
         println!("> Accept: */*\n>");
     }
 
-    match send_request(parsed_url.host_str().unwrap(), 80, parsed_url.path()) {
+    match send_request(parsed_url.host_str().unwrap(), 80, parsed_url.path(), &args.method) {
         Ok(response) => {
             let parts: Vec<&str> = response.split("\r\n\r\n").collect();
 
@@ -62,20 +62,20 @@ fn main() {
     }
 }
 
-fn send_request(host: &str, port: u16, path: &str) -> Result<String, Box<dyn Error>> {
+fn send_request(host: &str, port: u16, path: &str, method: &str) -> Result<String, Box<dyn Error>> {
     let mut stream = TcpStream::connect((host, port))?;
 
     stream.set_read_timeout(Some(Duration::from_secs(30)))?;
     stream.set_write_timeout(Some(Duration::from_secs(30)))?;
 
     let request = format!(
-        "GET {} HTTP/1.1\r\n\
+        "{} {} HTTP/1.1\r\n\
          Host: {}\r\n\
          Connection: close\r\n\
          User-Agent: rust-client\r\n\
          Accept: */*\r\n\
          \r\n",
-        path, host
+        method, path, host
     );
 
     stream.write_all(request.as_bytes())?;
