@@ -111,7 +111,27 @@ connecting to: http://eu.httpbin.org/post
 ### PUT
 ```bash
 cargo run -- -X PUT -d '{"key2": "value2"}' -H "Content-Type: application/json" http://eu.httpbin.org/put
-
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running `target/debug/rscurl -X PUT -d '{"key2": "value2"}' -H 'Content-Type: application/json' 'http://eu.httpbin.org/put'`
+{
+  "args": {}, 
+  "data": "{\"key2\": \"value2\"}", 
+  "files": {}, 
+  "form": {}, 
+  "headers": {
+    "Accept": "*/*", 
+    "Content-Length": "18", 
+    "Content-Type": "application/json", 
+    "Host": "eu.httpbin.org", 
+    "User-Agent": "rscurl", 
+    "X-Amzn-Trace-Id": "Root=1-68fbe9bc-58fd7766244f5a8c40e7a550"
+  }, 
+  "json": {
+    "key2": "value2"
+  }, 
+  "origin": "84.66.49.79", 
+  "url": "http://eu.httpbin.org/put"
+}
 ```
 
 
